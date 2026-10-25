@@ -1,0 +1,58 @@
+{
+  "rules": {
+    "locations": [
+      "india", "bengaluru", "bangalore", "kerala", "kochi", "cochin", "trivandrum",
+      "thiruvananthapuram", "calicut", "kozhikode", "chennai", "hyderabad", "pune",
+      "mumbai", "delhi", "gurgaon", "gurugram", "noida", "apac", "asia", "worldwide", "anywhere"
+    ],
+    "max_min_years": 3,
+    "exclude_titles": [
+      "support", "services engineer", "sales", "solutions", "customer", "account",
+      "recruit", "marketing", "designer", "data scientist", "analyst", "android", "ios"
+    ]
+  },
+  "companies": [
+    {"name": "Razorpay", "ats": "greenhouse", "slug": "razorpaysoftwareprivatelimited"},
+    {"name": "Groww", "ats": "greenhouse", "slug": "groww"},
+    {"name": "Druva", "ats": "greenhouse", "slug": "druva"},
+    {"name": "slice", "ats": "greenhouse", "slug": "slice"},
+    {"name": "InMobi", "ats": "greenhouse", "slug": "inmobi"},
+    {"name": "Glance", "ats": "greenhouse", "slug": "glance"},
+    {"name": "Rubrik", "ats": "greenhouse", "slug": "rubrik"},
+    {"name": "Observe.AI", "ats": "greenhouse", "slug": "observeai"},
+    {"name": "Coinbase", "ats": "greenhouse", "slug": "coinbase"},
+    {"name": "Grafana Labs", "ats": "greenhouse", "slug": "grafanalabs"},
+    {"name": "Cockroach Labs", "ats": "greenhouse", "slug": "cockroachlabs"},
+    {"name": "MongoDB", "ats": "greenhouse", "slug": "mongodb"},
+    {"name": "Elastic", "ats": "greenhouse", "slug": "elastic"},
+    {"name": "Cloudflare", "ats": "greenhouse", "slug": "cloudflare"},
+    {"name": "GitLab", "ats": "greenhouse", "slug": "gitlab"},
+    {"name": "Stripe", "ats": "greenhouse", "slug": "stripe"},
+    {"name": "Vercel", "ats": "greenhouse", "slug": "vercel"},
+    {"name": "Binance", "ats": "greenhouse", "slug": "binance"},
+    {"name": "Tailscale", "ats": "greenhouse", "slug": "tailscale"},
+    {"name": "PlanetScale", "ats": "greenhouse", "slug": "planetscale"},
+    {"name": "Meesho", "ats": "lever", "slug": "meesho"},
+    {"name": "Zeta", "ats": "lever", "slug": "zeta"},
+    {"name": "FamPay", "ats": "lever", "slug": "fampay"},
+    {"name": "Hevo Data", "ats": "lever", "slug": "hevodata"},
+    {"name": "Paytm", "ats": "lever", "slug": "paytm"},
+    {"name": "CRED", "ats": "lever", "slug": "cred"},
+    {"name": "Nium", "ats": "lever", "slug": "nium"},
+    {"name": "Neon", "ats": "lever", "slug": "neon"},
+    {"name": "Atlan", "ats": "ashby", "slug": "atlan"},
+    {"name": "SigNoz", "ats": "ashby", "slug": "signoz"},
+    {"name": "Kong", "ats": "ashby", "slug": "kong"},
+    {"name": "Docker", "ats": "ashby", "slug": "docker"},
+    {"name": "Supabase", "ats": "ashby", "slug": "supabase"},
+    {"name": "Airbyte", "ats": "ashby", "slug": "airbyte"},
+    {"name": "Temporal", "ats": "ashby", "slug": "temporal"},
+    {"name": "Tekion", "ats": "ashby", "slug": "tekion"},
+    {"name": "Sarvam AI", "ats": "ashby", "slug": "sarvam"},
+    {"name": "Railway", "ats": "ashby", "slug": "railway"},
+    {"name": "Resend", "ats": "ashby", "slug": "resend"},
+    {"name": "ClickHouse", "ats": "ashby", "slug": "clickhouse"},
+    {"name": "Sentry", "ats": "ashby", "slug": "sentry"},
+    {"name": "RemoteOK", "ats": "remoteok", "slug": "golang"}
+  ]
+}
