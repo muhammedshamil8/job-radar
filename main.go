@@ -139,7 +139,7 @@ func deliver(ctx context.Context, client *http.Client, ms []match) error {
 		return nil
 	}
 	tg := notify.Telegram{Token: token, ChatID: chat, Client: client}
-	header := fmt.Sprintf("🔎 %d new Go job(s)\n\n", len(ms))
+	header := fmt.Sprintf("🔎 %d new Go job(s)", len(ms))
 	return tg.Send(ctx, header, items(ms))
 }
 
