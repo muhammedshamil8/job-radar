@@ -6,6 +6,7 @@
       "mumbai", "delhi", "gurgaon", "gurugram", "noida", "apac", "asia", "worldwide", "anywhere"
     ],
     "max_min_years": 3,
+    "senior_years": 5,
     "exclude_titles": [
       "support", "services engineer", "sales", "solutions", "customer", "account",
       "recruit", "marketing", "designer", "data scientist", "analyst", "android", "ios"

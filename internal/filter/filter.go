@@ -17,6 +17,9 @@ type Rules struct {
 	Locations []string `json:"locations"`
 	// MaxMinYears: drop jobs whose smallest stated experience is >= this. 0 disables.
 	MaxMinYears int `json:"max_min_years"`
+	// SeniorYears: drop jobs that mention any "N years" figure >= this, which catches
+	// "5+ years, including 2+ years in X". 0 disables.
+	SeniorYears int `json:"senior_years"`
 	// ExcludeTitles: drop jobs whose title contains any of these (case-insensitive).
 	ExcludeTitles []string `json:"exclude_titles"`
 }
@@ -92,18 +95,34 @@ func goIsLanguage(s string, start, end int) bool {
 	return goBefore[strings.ToLower(before)]
 }
 
-// MinYears returns the smallest "N years" / "N-M yrs" figure in s, or -1.
+// yearFigures returns the lower bound of every "N years" / "N-M yrs" figure in s.
 // Figures above 15 are ignored ("founded 20 years ago").
+func yearFigures(s string) []int {
+	var out []int
+	for _, m := range yearsRE.FindAllStringSubmatch(s, -1) {
+		if n, err := strconv.Atoi(m[1]); err == nil && n <= 15 {
+			out = append(out, n)
+		}
+	}
+	return out
+}
+
+// MinYears returns the smallest year figure in s, or -1.
 func MinYears(s string) int {
 	best := -1
-	for _, m := range yearsRE.FindAllStringSubmatch(s, -1) {
-		n, err := strconv.Atoi(m[1])
-		if err != nil || n > 15 {
-			continue
-		}
+	for _, n := range yearFigures(s) {
 		if best == -1 || n < best {
 			best = n
 		}
+	}
+	return best
+}
+
+// MaxYears returns the largest year figure in s, or -1.
+func MaxYears(s string) int {
+	best := -1
+	for _, n := range yearFigures(s) {
+		best = max(best, n)
 	}
 	return best
 }
@@ -144,6 +163,8 @@ func Check(r Rules, j source.Job) Result {
 		res.Reason = "location"
 	case r.MaxMinYears > 0 && res.MinYears >= r.MaxMinYears:
 		res.Reason = "needs " + strconv.Itoa(res.MinYears) + "+ years"
+	case r.SeniorYears > 0 && MaxYears(j.Title+" "+j.Description) >= r.SeniorYears:
+		res.Reason = "mentions " + strconv.Itoa(MaxYears(j.Title+" "+j.Description)) + "+ years"
 	default:
 		res.OK = true
 	}
