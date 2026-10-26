@@ -39,6 +39,10 @@ var (
 
 	seniorRE = regexp.MustCompile(`(?i)\b(senior|sr\.?|staff|principal|lead|manager|director|head|architect|vp|distinguished|intern(ship)?|iii|l[5-9]|sde[- ]?3|engineer\s+3)\b`)
 
+	// A title that names another stack ("Backend (Python)", "Frontend (React)") is not a Go role
+	// even if the description mentions Go somewhere.
+	otherStackRE = regexp.MustCompile(`(?i)\b(python|java|php|ruby|rails|node(\.js)?|react|angular|vue|\.net|c#|kotlin|swift|scala|flutter|frontend|front-end|android|ios|salesforce)\b`)
+
 	yearsRE = regexp.MustCompile(`(?i)(\d{1,2})\s*\+?\s*(?:(?:-|–|to)\s*\d{1,2}\s*\+?\s*)?(?:years|yrs)`)
 )
 
@@ -155,6 +159,8 @@ func Check(r Rules, j source.Job) Result {
 	switch {
 	case !MentionsGo(j.Title, j.Description):
 		res.Reason = "no Go"
+	case otherStackRE.MatchString(j.Title) && !golangRE.MatchString(j.Title) && !goWordRE.MatchString(j.Title):
+		res.Reason = "title names another stack"
 	case seniorRE.MatchString(j.Title):
 		res.Reason = "senior/intern title"
 	case titleExcluded(r, j.Title):

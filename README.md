@@ -16,10 +16,11 @@ https://job-boards.greenhouse.io/gitlab/jobs/...
 2. Fetches all boards concurrently (bounded worker pool, per-request timeouts, retries with exponential backoff on 429/5xx).
 3. Keeps a job only if it:
    - is about Go the language. `golang` anywhere, or `Go` used as a language ("in Go", "Go, Rust", "Python/Go"), not the verb ("go to market", "go live");
-   - is not senior, lead, staff, intern or level 3, and not a support/sales title;
+   - is not senior, lead, staff, intern or level 3, not a support/sales title, and the title does not name a different stack ("Backend (Python)");
    - is in India, an Indian city, APAC, or remote and open to India;
-   - does not ask for 3+ years (the smallest "N years" figure in the posting).
+   - does not ask for 3+ years (the smallest "N years" figure) and does not mention 5+ years anywhere.
 4. Sends only jobs not in `data/seen.json`, then records them. The workflow commits that file back so the next run remembers.
+5. Once a day (first run after midnight IST) it sends a short summary: companies scanned, open matches, new in the last 24 hours, and one interview topic to prepare from `prep_topics` in `companies.json`. It doubles as proof the scanner is running.
 
 Only official public job-board APIs are used. No scraping, no logins.
 

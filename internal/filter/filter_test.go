@@ -65,6 +65,8 @@ func TestCheck(t *testing.T) {
 		{"level 3", source.Job{Title: "Software Engineer 3", Location: "India", Description: "Go"}, false},
 		{"senior hidden behind smaller figure", source.Job{Title: "Infrastructure SRE", Location: "Bengaluru", Description: "5+ years in SRE, including 2+ years with Go tooling."}, false},
 		{"range up to 4 is fine", source.Job{Title: "Software Engineer", Location: "Bengaluru", Description: "0-4 years experience in Go."}, true},
+		{"title names another stack", source.Job{Title: "Software Engineer, Backend (Python)", Location: "India", Description: "We also use Go, Rust."}, false},
+		{"title names Go and Python", source.Job{Title: "Backend Engineer (Python/Go)", Location: "India", Description: "1+ years"}, true},
 		{"support", source.Job{Title: "Technical Support Engineer", Location: "India", Description: "Go"}, false},
 	}
 	for _, tt := range tests {

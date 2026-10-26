@@ -36,6 +36,17 @@ func (s Seen) Prune(maxAge time.Duration) {
 	}
 }
 
+// Since counts entries first seen after t.
+func (s Seen) Since(t time.Time) int {
+	n := 0
+	for _, seen := range s {
+		if seen.After(t) {
+			n++
+		}
+	}
+	return n
+}
+
 // Save writes s to path atomically.
 func (s Seen) Save(path string) error {
 	data, err := json.MarshalIndent(s, "", "  ")

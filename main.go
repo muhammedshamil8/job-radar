@@ -6,10 +6,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"html"
 	"log"
 	"net/http"
 	"os"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -20,9 +22,13 @@ import (
 )
 
 type config struct {
-	Rules     filter.Rules     `json:"rules"`
-	Companies []source.Company `json:"companies"`
+	Rules      filter.Rules     `json:"rules"`
+	Companies  []source.Company `json:"companies"`
+	PrepTopics []string         `json:"prep_topics"` // one per day in the daily summary
 }
+
+// ist is the timezone that decides when a new day starts for the daily summary.
+var ist = time.FixedZone("IST", 5*3600+30*60)
 
 type match struct {
 	job source.Job
@@ -32,6 +38,7 @@ type match struct {
 func main() {
 	cfgPath := flag.String("config", "companies.json", "companies and rules")
 	seenPath := flag.String("seen", "data/seen.json", "already-sent job IDs")
+	digestPath := flag.String("digest", "data/digest.txt", "date of the last daily summary")
 	initOnly := flag.Bool("init", false, "mark every current match as seen without sending (first run)")
 	all := flag.Bool("all", false, "print every current match, ignore and keep the seen file")
 	workers := flag.Int("workers", 8, "boards fetched at once")
@@ -79,6 +86,43 @@ func main() {
 	if err := seen.Save(*seenPath); err != nil {
 		log.Fatalf("save seen: %v", err)
 	}
+
+	if !*initOnly {
+		s := summary{companies: len(cfg.Companies), failed: failed, open: len(matches), newDay: seen.Since(now.Add(-24 * time.Hour))}
+		if err := dailySummary(ctx, client, cfg.PrepTopics, s, *digestPath, now); err != nil {
+			log.Printf("daily summary: %v", err)
+		}
+	}
+}
+
+type summary struct {
+	companies, failed, open, newDay int
+}
+
+// dailySummary sends one message per IST day: what the scan saw, and a topic to prepare.
+// It runs on the first scan of the day, so it doubles as proof the scanner is alive.
+func dailySummary(ctx context.Context, client *http.Client, topics []string, s summary, path string, now time.Time) error {
+	today := now.In(ist).Format("2006-01-02")
+	if last, err := os.ReadFile(path); err == nil && strings.TrimSpace(string(last)) == today {
+		return nil
+	}
+
+	var b strings.Builder
+	fmt.Fprintf(&b, "☀️ <b>job-radar · %s</b>\n", now.In(ist).Format("Mon 2 Jan"))
+	fmt.Fprintf(&b, "Scanned %d companies", s.companies)
+	if s.failed > 0 {
+		fmt.Fprintf(&b, " (%d failed)", s.failed)
+	}
+	fmt.Fprintf(&b, ".\nOpen matches: %d · new in last 24h: %d\n", s.open, s.newDay)
+	if len(topics) > 0 {
+		topic := topics[now.In(ist).YearDay()%len(topics)]
+		fmt.Fprintf(&b, "\n📚 <b>Prep today:</b> %s", html.EscapeString(topic))
+	}
+
+	if err := send(ctx, client, b.String(), nil); err != nil {
+		return err
+	}
+	return os.WriteFile(path, []byte(today+"\n"), 0o644)
 }
 
 func loadConfig(path string) (config, error) {
@@ -131,15 +175,19 @@ func items(ms []match) []notify.Item {
 	return out
 }
 
-// deliver sends to Telegram when configured, otherwise prints.
+// deliver sends new matches to Telegram when configured, otherwise prints them.
 func deliver(ctx context.Context, client *http.Client, ms []match) error {
+	return send(ctx, client, fmt.Sprintf("🔎 %d new Go job(s)", len(ms)), ms)
+}
+
+func send(ctx context.Context, client *http.Client, header string, ms []match) error {
 	token, chat := os.Getenv("TELEGRAM_BOT_TOKEN"), os.Getenv("TELEGRAM_CHAT_ID")
 	if token == "" || chat == "" {
+		fmt.Println(header)
 		printMatches(ms)
 		return nil
 	}
 	tg := notify.Telegram{Token: token, ChatID: chat, Client: client}
-	header := fmt.Sprintf("🔎 %d new Go job(s)", len(ms))
 	return tg.Send(ctx, header, items(ms))
 }
 

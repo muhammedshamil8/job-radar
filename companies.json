@@ -1,59 +1,382 @@
 {
   "rules": {
     "locations": [
-      "india", "bengaluru", "bangalore", "kerala", "kochi", "cochin", "trivandrum",
-      "thiruvananthapuram", "calicut", "kozhikode", "chennai", "hyderabad", "pune",
-      "mumbai", "delhi", "gurgaon", "gurugram", "noida", "apac", "asia", "worldwide", "anywhere"
+      "india",
+      "bengaluru",
+      "bangalore",
+      "kerala",
+      "kochi",
+      "cochin",
+      "trivandrum",
+      "thiruvananthapuram",
+      "calicut",
+      "kozhikode",
+      "chennai",
+      "hyderabad",
+      "pune",
+      "mumbai",
+      "delhi",
+      "gurgaon",
+      "gurugram",
+      "noida",
+      "apac",
+      "asia",
+      "worldwide",
+      "anywhere"
     ],
     "max_min_years": 3,
     "senior_years": 5,
     "exclude_titles": [
-      "support", "services engineer", "sales", "solutions", "customer", "account",
-      "recruit", "marketing", "designer", "data scientist", "analyst", "android", "ios"
+      "support",
+      "services engineer",
+      "sales",
+      "solutions",
+      "customer",
+      "account",
+      "recruit",
+      "marketing",
+      "designer",
+      "data scientist",
+      "analyst",
+      "android",
+      "ios"
     ]
   },
   "companies": [
-    {"name": "Razorpay", "ats": "greenhouse", "slug": "razorpaysoftwareprivatelimited"},
-    {"name": "Groww", "ats": "greenhouse", "slug": "groww"},
-    {"name": "Druva", "ats": "greenhouse", "slug": "druva"},
-    {"name": "slice", "ats": "greenhouse", "slug": "slice"},
-    {"name": "InMobi", "ats": "greenhouse", "slug": "inmobi"},
-    {"name": "Glance", "ats": "greenhouse", "slug": "glance"},
-    {"name": "Rubrik", "ats": "greenhouse", "slug": "rubrik"},
-    {"name": "Observe.AI", "ats": "greenhouse", "slug": "observeai"},
-    {"name": "Coinbase", "ats": "greenhouse", "slug": "coinbase"},
-    {"name": "Grafana Labs", "ats": "greenhouse", "slug": "grafanalabs"},
-    {"name": "Cockroach Labs", "ats": "greenhouse", "slug": "cockroachlabs"},
-    {"name": "MongoDB", "ats": "greenhouse", "slug": "mongodb"},
-    {"name": "Elastic", "ats": "greenhouse", "slug": "elastic"},
-    {"name": "Cloudflare", "ats": "greenhouse", "slug": "cloudflare"},
-    {"name": "GitLab", "ats": "greenhouse", "slug": "gitlab"},
-    {"name": "Stripe", "ats": "greenhouse", "slug": "stripe"},
-    {"name": "Vercel", "ats": "greenhouse", "slug": "vercel"},
-    {"name": "Binance", "ats": "greenhouse", "slug": "binance"},
-    {"name": "Tailscale", "ats": "greenhouse", "slug": "tailscale"},
-    {"name": "PlanetScale", "ats": "greenhouse", "slug": "planetscale"},
-    {"name": "Meesho", "ats": "lever", "slug": "meesho"},
-    {"name": "Zeta", "ats": "lever", "slug": "zeta"},
-    {"name": "FamPay", "ats": "lever", "slug": "fampay"},
-    {"name": "Hevo Data", "ats": "lever", "slug": "hevodata"},
-    {"name": "Paytm", "ats": "lever", "slug": "paytm"},
-    {"name": "CRED", "ats": "lever", "slug": "cred"},
-    {"name": "Nium", "ats": "lever", "slug": "nium"},
-    {"name": "Neon", "ats": "lever", "slug": "neon"},
-    {"name": "Atlan", "ats": "ashby", "slug": "atlan"},
-    {"name": "SigNoz", "ats": "ashby", "slug": "signoz"},
-    {"name": "Kong", "ats": "ashby", "slug": "kong"},
-    {"name": "Docker", "ats": "ashby", "slug": "docker"},
-    {"name": "Supabase", "ats": "ashby", "slug": "supabase"},
-    {"name": "Airbyte", "ats": "ashby", "slug": "airbyte"},
-    {"name": "Temporal", "ats": "ashby", "slug": "temporal"},
-    {"name": "Tekion", "ats": "ashby", "slug": "tekion"},
-    {"name": "Sarvam AI", "ats": "ashby", "slug": "sarvam"},
-    {"name": "Railway", "ats": "ashby", "slug": "railway"},
-    {"name": "Resend", "ats": "ashby", "slug": "resend"},
-    {"name": "ClickHouse", "ats": "ashby", "slug": "clickhouse"},
-    {"name": "Sentry", "ats": "ashby", "slug": "sentry"},
-    {"name": "RemoteOK", "ats": "remoteok", "slug": "golang"}
+    {
+      "name": "Razorpay",
+      "ats": "greenhouse",
+      "slug": "razorpaysoftwareprivatelimited"
+    },
+    {
+      "name": "Groww",
+      "ats": "greenhouse",
+      "slug": "groww"
+    },
+    {
+      "name": "Druva",
+      "ats": "greenhouse",
+      "slug": "druva"
+    },
+    {
+      "name": "slice",
+      "ats": "greenhouse",
+      "slug": "slice"
+    },
+    {
+      "name": "InMobi",
+      "ats": "greenhouse",
+      "slug": "inmobi"
+    },
+    {
+      "name": "Glance",
+      "ats": "greenhouse",
+      "slug": "glance"
+    },
+    {
+      "name": "Rubrik",
+      "ats": "greenhouse",
+      "slug": "rubrik"
+    },
+    {
+      "name": "Observe.AI",
+      "ats": "greenhouse",
+      "slug": "observeai"
+    },
+    {
+      "name": "Coinbase",
+      "ats": "greenhouse",
+      "slug": "coinbase"
+    },
+    {
+      "name": "Grafana Labs",
+      "ats": "greenhouse",
+      "slug": "grafanalabs"
+    },
+    {
+      "name": "Cockroach Labs",
+      "ats": "greenhouse",
+      "slug": "cockroachlabs"
+    },
+    {
+      "name": "MongoDB",
+      "ats": "greenhouse",
+      "slug": "mongodb"
+    },
+    {
+      "name": "Elastic",
+      "ats": "greenhouse",
+      "slug": "elastic"
+    },
+    {
+      "name": "Cloudflare",
+      "ats": "greenhouse",
+      "slug": "cloudflare"
+    },
+    {
+      "name": "GitLab",
+      "ats": "greenhouse",
+      "slug": "gitlab"
+    },
+    {
+      "name": "Stripe",
+      "ats": "greenhouse",
+      "slug": "stripe"
+    },
+    {
+      "name": "Vercel",
+      "ats": "greenhouse",
+      "slug": "vercel"
+    },
+    {
+      "name": "Binance",
+      "ats": "greenhouse",
+      "slug": "binance"
+    },
+    {
+      "name": "Tailscale",
+      "ats": "greenhouse",
+      "slug": "tailscale"
+    },
+    {
+      "name": "PlanetScale",
+      "ats": "greenhouse",
+      "slug": "planetscale"
+    },
+    {
+      "name": "Meesho",
+      "ats": "lever",
+      "slug": "meesho"
+    },
+    {
+      "name": "Zeta",
+      "ats": "lever",
+      "slug": "zeta"
+    },
+    {
+      "name": "FamPay",
+      "ats": "lever",
+      "slug": "fampay"
+    },
+    {
+      "name": "Hevo Data",
+      "ats": "lever",
+      "slug": "hevodata"
+    },
+    {
+      "name": "Paytm",
+      "ats": "lever",
+      "slug": "paytm"
+    },
+    {
+      "name": "CRED",
+      "ats": "lever",
+      "slug": "cred"
+    },
+    {
+      "name": "Nium",
+      "ats": "lever",
+      "slug": "nium"
+    },
+    {
+      "name": "Neon",
+      "ats": "lever",
+      "slug": "neon"
+    },
+    {
+      "name": "Atlan",
+      "ats": "ashby",
+      "slug": "atlan"
+    },
+    {
+      "name": "SigNoz",
+      "ats": "ashby",
+      "slug": "signoz"
+    },
+    {
+      "name": "Kong",
+      "ats": "ashby",
+      "slug": "kong"
+    },
+    {
+      "name": "Docker",
+      "ats": "ashby",
+      "slug": "docker"
+    },
+    {
+      "name": "Supabase",
+      "ats": "ashby",
+      "slug": "supabase"
+    },
+    {
+      "name": "Airbyte",
+      "ats": "ashby",
+      "slug": "airbyte"
+    },
+    {
+      "name": "Temporal",
+      "ats": "ashby",
+      "slug": "temporal"
+    },
+    {
+      "name": "Tekion",
+      "ats": "ashby",
+      "slug": "tekion"
+    },
+    {
+      "name": "Sarvam AI",
+      "ats": "ashby",
+      "slug": "sarvam"
+    },
+    {
+      "name": "Railway",
+      "ats": "ashby",
+      "slug": "railway"
+    },
+    {
+      "name": "Resend",
+      "ats": "ashby",
+      "slug": "resend"
+    },
+    {
+      "name": "ClickHouse",
+      "ats": "ashby",
+      "slug": "clickhouse"
+    },
+    {
+      "name": "Sentry",
+      "ats": "ashby",
+      "slug": "sentry"
+    },
+    {
+      "name": "TrueFoundry",
+      "ats": "greenhouse",
+      "slug": "truefoundry"
+    },
+    {
+      "name": "CloudSEK",
+      "ats": "greenhouse",
+      "slug": "cloudsek"
+    },
+    {
+      "name": "Clear (ClearTax)",
+      "ats": "greenhouse",
+      "slug": "clear"
+    },
+    {
+      "name": "Sigmoid",
+      "ats": "greenhouse",
+      "slug": "sigmoid"
+    },
+    {
+      "name": "Porter",
+      "ats": "lever",
+      "slug": "porter"
+    },
+    {
+      "name": "HackerRank",
+      "ats": "greenhouse",
+      "slug": "hackerrank"
+    },
+    {
+      "name": "HighRadius",
+      "ats": "greenhouse",
+      "slug": "highradius"
+    },
+    {
+      "name": "Verse Innovation (Dailyhunt, Josh)",
+      "ats": "greenhouse",
+      "slug": "verse"
+    },
+    {
+      "name": "Zenoti",
+      "ats": "greenhouse",
+      "slug": "zenoti"
+    },
+    {
+      "name": "Mindtickle",
+      "ats": "lever",
+      "slug": "mindtickle"
+    },
+    {
+      "name": "Pocket FM",
+      "ats": "lever",
+      "slug": "pocketfm"
+    },
+    {
+      "name": "Fi Money",
+      "ats": "lever",
+      "slug": "fi"
+    },
+    {
+      "name": "100ms",
+      "ats": "lever",
+      "slug": "100ms"
+    },
+    {
+      "name": "Ditto Insurance",
+      "ats": "ashby",
+      "slug": "ditto"
+    },
+    {
+      "name": "Bureau",
+      "ats": "ashby",
+      "slug": "bureau"
+    },
+    {
+      "name": "Navi",
+      "ats": "ashby",
+      "slug": "navi"
+    },
+    {
+      "name": "Plane",
+      "ats": "ashby",
+      "slug": "plane"
+    },
+    {
+      "name": "Leap",
+      "ats": "ashby",
+      "slug": "leap"
+    },
+    {
+      "name": "SpotDraft",
+      "ats": "ashby",
+      "slug": "spotdraft"
+    },
+    {
+      "name": "RemoteOK",
+      "ats": "remoteok",
+      "slug": "golang"
+    }
+  ],
+  "prep_topics": [
+    "Networking: TCP vs UDP, and the TCP 3-way handshake",
+    "Networking: what happens when you type a URL (DNS, TCP, TLS, HTTP)",
+    "Networking: the TLS handshake and certificates",
+    "Reliability: timeouts, retries with exponential backoff, idempotency",
+    "Go: context for cancellation and deadlines (read job-radar internal/source/source.go)",
+    "Go: goroutines, channels, select, and a worker pool (read job-radar main.go scan())",
+    "Go: Mutex vs RWMutex vs channels, and go test -race",
+    "Go: interfaces and error handling (wrapping, errors.Is / errors.As)",
+    "Go: table-driven tests, httptest, mocks",
+    "FitDuel story: the WebSocket slow-client fix, out loud in 30 seconds",
+    "FitDuel story: ~250 queries to 2 (N+1), out loud in 30 seconds",
+    "SQL: joins and GROUP BY (interview-playground/sql/02, 03)",
+    "SQL: indexes and EXPLAIN (interview-playground/sql/07)",
+    "SQL: transactions, isolation levels, locking (interview-playground/sql/06)",
+    "Redis: data types, sorted-set leaderboards, Pub/Sub",
+    "API design: status codes, pagination, versioning, auth",
+    "Queues: SQS, dead-letter queues, at-least-once delivery, idempotent consumers",
+    "DSA: arrays and hashing (2 LeetCode easy)",
+    "DSA: two pointers and sliding window (2 problems)",
+    "DSA: stacks and queues (2 problems)",
+    "DSA: binary search (2 problems)",
+    "DSA: trees, BFS and DFS (2 problems)",
+    "DSA: graphs (1-2 problems)",
+    "System design: URL shortener (explain Snippy end to end)",
+    "System design: rate limiter",
+    "Docker: images, layers, multi-stage builds",
+    "OS basics: process vs thread, how the Go scheduler runs goroutines",
+    "Behavioral: tell me about yourself + why are you switching (2 minutes, out loud)"
   ]
 }
