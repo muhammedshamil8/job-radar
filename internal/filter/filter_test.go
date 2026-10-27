@@ -50,7 +50,7 @@ func TestMinYears(t *testing.T) {
 }
 
 func TestCheck(t *testing.T) {
-	r := Rules{Locations: []string{"india", "bengaluru", "bangalore"}, MaxMinYears: 3, SeniorYears: 5, ExcludeTitles: []string{"support"}}
+	r := Rules{Locations: []string{"india", "bengaluru", "bangalore", "kerala"}, MaxMinYears: 3, SeniorYears: 5, ExcludeTitles: []string{"support"}}
 	tests := []struct {
 		name   string
 		job    source.Job
@@ -67,6 +67,12 @@ func TestCheck(t *testing.T) {
 		{"range up to 4 is fine", source.Job{Title: "Software Engineer", Location: "Bengaluru", Description: "0-4 years experience in Go."}, true},
 		{"title names another stack", source.Job{Title: "Software Engineer, Backend (Python)", Location: "India", Description: "We also use Go, Rust."}, false},
 		{"title names Go and Python", source.Job{Title: "Backend Engineer (Python/Go)", Location: "India", Description: "1+ years"}, true},
+		{"kerala backend title", source.Job{Title: "Node.js Developer", Location: "Technopark, Trivandrum, Kerala", TitleOnly: true}, true},
+		{"kerala full stack", source.Job{Title: "Full Stack Developer (MERN)", Location: "Infopark, Kochi, Kerala", TitleOnly: true}, true},
+		{"kerala non-backend", source.Job{Title: "Salesforce Functional Consultant", Location: "Technopark, Trivandrum, Kerala", TitleOnly: true}, false},
+		{"kerala java", source.Job{Title: "Java Full Stack Developer [Java Angular]", Location: "Infopark, Kochi, Kerala", TitleOnly: true}, false},
+		{"kerala python react", source.Job{Title: "Full Stack Developer - Python+ReactJS", Location: "Infopark, Kochi, Kerala", TitleOnly: true}, true},
+		{"kerala senior", source.Job{Title: "Senior Backend Developer", Location: "Technopark, Trivandrum, Kerala", TitleOnly: true}, false},
 		{"support", source.Job{Title: "Technical Support Engineer", Location: "India", Description: "Go"}, false},
 	}
 	for _, tt := range tests {

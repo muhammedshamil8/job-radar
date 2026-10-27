@@ -170,7 +170,11 @@ func scan(ctx context.Context, client *http.Client, cfg config, workers int) (ma
 func items(ms []match) []notify.Item {
 	out := make([]notify.Item, len(ms))
 	for i, m := range ms {
-		out[i] = notify.Item{Title: m.job.Title, Company: m.job.Company, Location: m.job.Location, URL: m.job.URL, MinYears: m.res.MinYears}
+		title := m.job.Title
+		if m.job.TitleOnly {
+			title = "🌴 " + title // Kerala IT park: backend/full-stack match, not checked for Go
+		}
+		out[i] = notify.Item{Title: title, Company: m.job.Company, Location: m.job.Location, URL: m.job.URL, MinYears: m.res.MinYears}
 	}
 	return out
 }

@@ -39,7 +39,9 @@
       "data scientist",
       "analyst",
       "android",
-      "ios"
+      "ios",
+      "trainee",
+      "architect"
     ]
   },
   "companies": [
@@ -347,6 +349,16 @@
       "name": "RemoteOK",
       "ats": "remoteok",
       "slug": "golang"
+    },
+    {
+      "name": "Technopark (Trivandrum)",
+      "ats": "technopark",
+      "slug": "all"
+    },
+    {
+      "name": "Infopark (Kochi)",
+      "ats": "infopark",
+      "slug": "all"
     }
   ],
   "prep_topics": [

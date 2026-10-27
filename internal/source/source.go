@@ -24,12 +24,13 @@ type Job struct {
 	URL         string
 	Description string // plain text
 	Posted      time.Time
+	TitleOnly   bool // the source has no description (IT park portals); filter on the title
 }
 
 // Company is one entry in companies.json.
 type Company struct {
 	Name string `json:"name"`
-	ATS  string `json:"ats"`  // greenhouse | lever | ashby | remoteok
+	ATS  string `json:"ats"`  // greenhouse | lever | ashby | remoteok | technopark | infopark
 	Slug string `json:"slug"` // board name on that ATS
 }
 
@@ -44,6 +45,10 @@ func Fetch(ctx context.Context, c *http.Client, co Company) ([]Job, error) {
 		return ashby(ctx, c, co)
 	case "remoteok":
 		return remoteOK(ctx, c, co)
+	case "technopark":
+		return technopark(ctx, c, co)
+	case "infopark":
+		return infopark(ctx, c, co)
 	default:
 		return nil, fmt.Errorf("unknown ats %q", co.ATS)
 	}

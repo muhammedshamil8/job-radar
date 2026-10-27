@@ -43,6 +43,15 @@ var (
 	// even if the description mentions Go somewhere.
 	otherStackRE = regexp.MustCompile(`(?i)\b(python|java|php|ruby|rails|node(\.js)?|react|angular|vue|\.net|c#|kotlin|swift|scala|flutter|frontend|front-end|android|ios|salesforce)\b`)
 
+	// Title-only sources (Kerala IT parks) rarely post Go roles, so they also accept
+	// general backend and full-stack titles.
+	backendTitleRE = regexp.MustCompile(`(?i)\b(golang|go developer|go engineer|backend|back[- ]end|full[- ]?stack|node(\.js|js)?)\b`)
+
+	// For title-only jobs: drop titles built on a stack outside Go/Node/React/Vue,
+	// unless the title also names one of those.
+	parkOtherRE = regexp.MustCompile(`(?i)(\bjava\b|\.net|\bangular|\bc#|salesforce|power platform|\bphp\b|laravel|\bruby\b|django|wordpress|odoo|sap\b)`)
+	parkMineRE  = regexp.MustCompile(`(?i)\b(golang|go|node(\.js|js)?|react(js)?|mern|typescript|vue)\b`)
+
 	yearsRE = regexp.MustCompile(`(?i)(\d{1,2})\s*\+?\s*(?:(?:-|–|to)\s*\d{1,2}\s*\+?\s*)?(?:years|yrs)`)
 )
 
@@ -157,9 +166,13 @@ func titleExcluded(r Rules, title string) bool {
 func Check(r Rules, j source.Job) Result {
 	res := Result{MinYears: MinYears(j.Title + " " + j.Description)}
 	switch {
-	case !MentionsGo(j.Title, j.Description):
+	case j.TitleOnly && !backendTitleRE.MatchString(j.Title):
+		res.Reason = "not a backend title"
+	case j.TitleOnly && parkOtherRE.MatchString(j.Title) && !parkMineRE.MatchString(j.Title):
+		res.Reason = "title names another stack"
+	case !j.TitleOnly && !MentionsGo(j.Title, j.Description):
 		res.Reason = "no Go"
-	case otherStackRE.MatchString(j.Title) && !golangRE.MatchString(j.Title) && !goWordRE.MatchString(j.Title):
+	case !j.TitleOnly && otherStackRE.MatchString(j.Title) && !golangRE.MatchString(j.Title) && !goWordRE.MatchString(j.Title):
 		res.Reason = "title names another stack"
 	case seniorRE.MatchString(j.Title):
 		res.Reason = "senior/intern title"
