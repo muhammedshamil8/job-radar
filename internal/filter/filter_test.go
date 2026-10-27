@@ -17,6 +17,7 @@ func TestMentionsGo(t *testing.T) {
 		{"Software Engineer", "Languages: Go, Rust or Java.", true},
 		{"Software Engineer", "We use Python/Go for our backend.", true},
 		{"Software Engineer", "Strong golang skills.", true},
+		{"Software Engineer", "Experience with Go Lang is a plus.", true},
 		{"Go-To-Market Manager", "", false},
 		{"Software Engineer", "Go to market fast. Go beyond your role.", false},
 		{"Software Engineer", "Go live in weeks. We go deep on quality.", false},
@@ -67,17 +68,37 @@ func TestCheck(t *testing.T) {
 		{"range up to 4 is fine", source.Job{Title: "Software Engineer", Location: "Bengaluru", Description: "0-4 years experience in Go."}, true},
 		{"title names another stack", source.Job{Title: "Software Engineer, Backend (Python)", Location: "India", Description: "We also use Go, Rust."}, false},
 		{"title names Go and Python", source.Job{Title: "Backend Engineer (Python/Go)", Location: "India", Description: "1+ years"}, true},
-		{"kerala backend title", source.Job{Title: "Node.js Developer", Location: "Technopark, Trivandrum, Kerala", TitleOnly: true}, true},
-		{"kerala full stack", source.Job{Title: "Full Stack Developer (MERN)", Location: "Infopark, Kochi, Kerala", TitleOnly: true}, true},
-		{"kerala non-backend", source.Job{Title: "Salesforce Functional Consultant", Location: "Technopark, Trivandrum, Kerala", TitleOnly: true}, false},
-		{"kerala java", source.Job{Title: "Java Full Stack Developer [Java Angular]", Location: "Infopark, Kochi, Kerala", TitleOnly: true}, false},
-		{"kerala python react", source.Job{Title: "Full Stack Developer - Python+ReactJS", Location: "Infopark, Kochi, Kerala", TitleOnly: true}, true},
-		{"kerala senior", source.Job{Title: "Senior Backend Developer", Location: "Technopark, Trivandrum, Kerala", TitleOnly: true}, false},
+		{"park job with Go and 1 year", source.Job{Title: "Backend Developer", Location: "Infopark, Kochi, Kerala", Description: "1-2 years building REST APIs in Golang."}, true},
+		{"park job without Go", source.Job{Title: "Full Stack Developer (MERN)", Location: "Infopark, Kochi, Kerala", Description: "1-2 years with Node.js and React."}, false},
+		{"park job 3-6 years", source.Job{Title: "Backend Developer", Location: "Technopark, Trivandrum, Kerala", Description: "3-6 years experience in Golang."}, false},
+		{"park job not opened yet", source.Job{Title: "Backend Developer", Location: "Technopark, Trivandrum, Kerala", TitleOnly: true}, false},
 		{"support", source.Job{Title: "Technical Support Engineer", Location: "India", Description: "Go"}, false},
 	}
 	for _, tt := range tests {
 		if got := Check(r, tt.job); got.OK != tt.wantOK {
 			t.Errorf("%s: OK = %v (%s), want %v", tt.name, got.OK, got.Reason, tt.wantOK)
+		}
+	}
+}
+
+func TestParkCandidate(t *testing.T) {
+	r := Rules{ExcludeTitles: []string{"support"}}
+	tests := []struct {
+		title string
+		want  bool
+	}{
+		{"Backend Developer", true},
+		{"Software Engineer", true},
+		{"Node.js Developer", true},
+		{"Senior Backend Developer", false},
+		{"Java Full Stack Developer", false},
+		{"Full-Stack Developer (.NET / React)", true},
+		{"Videographer cum Editor", false},
+		{"Business Development Executive", false},
+	}
+	for _, tt := range tests {
+		if got := ParkCandidate(r, tt.title); got != tt.want {
+			t.Errorf("ParkCandidate(%q) = %v, want %v", tt.title, got, tt.want)
 		}
 	}
 }

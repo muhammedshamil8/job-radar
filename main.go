@@ -39,6 +39,7 @@ func main() {
 	cfgPath := flag.String("config", "companies.json", "companies and rules")
 	seenPath := flag.String("seen", "data/seen.json", "already-sent job IDs")
 	digestPath := flag.String("digest", "data/digest.txt", "date of the last daily summary")
+	detailsPath := flag.String("details", "data/park-details.json", "cached descriptions of IT park jobs")
 	initOnly := flag.Bool("init", false, "mark every current match as seen without sending (first run)")
 	all := flag.Bool("all", false, "print every current match, ignore and keep the seen file")
 	workers := flag.Int("workers", 8, "boards fetched at once")
@@ -52,12 +53,20 @@ func main() {
 	if err != nil {
 		log.Fatalf("seen file: %v", err)
 	}
+	details, err := store.LoadDetails(*detailsPath)
+	if err != nil {
+		log.Fatalf("details file: %v", err)
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	client := &http.Client{Timeout: 30 * time.Second}
 
-	matches, failed := scan(ctx, client, cfg, *workers)
+	matches, failed := scan(ctx, client, cfg, *workers, &describer{client: client, cache: details})
+	details.Prune(60 * 24 * time.Hour)
+	if err := details.Save(*detailsPath); err != nil {
+		log.Fatalf("save details: %v", err)
+	}
 
 	var fresh []match
 	for _, m := range matches {
@@ -135,7 +144,7 @@ func loadConfig(path string) (config, error) {
 }
 
 // scan fetches every board with a bounded worker pool and keeps the matches.
-func scan(ctx context.Context, client *http.Client, cfg config, workers int) (matches []match, failed int) {
+func scan(ctx context.Context, client *http.Client, cfg config, workers int, d *describer) (matches []match, failed int) {
 	var (
 		mu  sync.Mutex
 		wg  sync.WaitGroup
@@ -149,6 +158,9 @@ func scan(ctx context.Context, client *http.Client, cfg config, workers int) (ma
 			defer func() { <-sem }()
 
 			jobs, err := source.Fetch(ctx, client, co)
+			if err == nil {
+				jobs = d.fill(ctx, cfg.Rules, jobs)
+			}
 			mu.Lock()
 			defer mu.Unlock()
 			if err != nil {
@@ -167,12 +179,63 @@ func scan(ctx context.Context, client *http.Client, cfg config, workers int) (ma
 	return matches, failed
 }
 
+// describer fills in descriptions for title-only jobs, opening each job page once
+// and caching the text, so the normal Go and experience rules can run on them.
+type describer struct {
+	client  *http.Client
+	mu      sync.Mutex
+	cache   store.Details
+	fetched int
+}
+
+// maxDescribe caps new detail-page requests per run, to stay polite to the portals.
+const maxDescribe = 150
+
+func (d *describer) fill(ctx context.Context, r filter.Rules, jobs []source.Job) []source.Job {
+	out := jobs[:0]
+	for _, j := range jobs {
+		if !j.TitleOnly {
+			out = append(out, j)
+			continue
+		}
+		if !filter.ParkCandidate(r, j.Title) {
+			continue
+		}
+		d.mu.Lock()
+		cached, ok := d.cache[j.ID]
+		budget := d.fetched < maxDescribe
+		if !ok && budget {
+			d.fetched++
+		}
+		d.mu.Unlock()
+
+		if !ok {
+			if !budget {
+				continue // next run
+			}
+			text, err := source.Describe(ctx, d.client, j)
+			if err != nil {
+				log.Printf("describe %s: %v", j.ID, err)
+				continue
+			}
+			cached = store.Detail{Text: text, Fetched: time.Now().UTC()}
+			d.mu.Lock()
+			d.cache[j.ID] = cached
+			d.mu.Unlock()
+		}
+		j.Description = cached.Text
+		j.TitleOnly = false
+		out = append(out, j)
+	}
+	return out
+}
+
 func items(ms []match) []notify.Item {
 	out := make([]notify.Item, len(ms))
 	for i, m := range ms {
 		title := m.job.Title
-		if m.job.TitleOnly {
-			title = "🌴 " + title // Kerala IT park: backend/full-stack match, not checked for Go
+		if strings.HasPrefix(m.job.ID, "technopark:") || strings.HasPrefix(m.job.ID, "infopark:") {
+			title = "🌴 " + title // Kerala IT park
 		}
 		out[i] = notify.Item{Title: title, Company: m.job.Company, Location: m.job.Location, URL: m.job.URL, MinYears: m.res.MinYears}
 	}

@@ -19,7 +19,7 @@ https://job-boards.greenhouse.io/gitlab/jobs/...
    - is not senior, lead, staff, intern or level 3, not a support/sales title, and the title does not name a different stack ("Backend (Python)");
    - is in India, an Indian city, APAC, or remote and open to India;
    - does not ask for 3+ years (the smallest "N years" figure) and does not mention 5+ years anywhere.
-   - IT park portals have titles but no descriptions, and Kerala has few Go roles, so their jobs (marked 🌴) only need a backend / full-stack / Node / Go title that is not senior and not built on Java, .NET, Angular, PHP or Django.
+   - IT park portals list titles only. Developer titles that are not senior and not built on another stack (Java, .NET, Angular, PHP, Django...) are opened once to read the description, which is cached in `data/park-details.json`; then the same Go and experience rules apply. Kerala matches are marked 🌴.
 4. Sends only jobs not in `data/seen.json`, then records them. The workflow commits that file back so the next run remembers.
 5. Once a day (first run after midnight IST) it sends a short summary: companies scanned, open matches, new in the last 24 hours, and one interview topic to prepare from `prep_topics` in `companies.json`. It doubles as proof the scanner is running.
 

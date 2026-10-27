@@ -49,7 +49,11 @@ func (s Seen) Since(t time.Time) int {
 
 // Save writes s to path atomically.
 func (s Seen) Save(path string) error {
-	data, err := json.MarshalIndent(s, "", "  ")
+	return writeJSON(path, s)
+}
+
+func writeJSON(path string, v any) error {
+	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		return err
 	}
@@ -61,4 +65,41 @@ func (s Seen) Save(path string) error {
 		return err
 	}
 	return os.Rename(tmp, path)
+}
+
+// Detail is a cached job description, so title-only sources are opened once per job.
+type Detail struct {
+	Text    string    `json:"text"`
+	Fetched time.Time `json:"fetched"`
+}
+
+// Details maps job ID to its cached description.
+type Details map[string]Detail
+
+// LoadDetails reads the cache at path. A missing file is an empty cache.
+func LoadDetails(path string) (Details, error) {
+	data, err := os.ReadFile(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return Details{}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	d := Details{}
+	return d, json.Unmarshal(data, &d)
+}
+
+// Prune drops descriptions fetched before now-maxAge.
+func (d Details) Prune(maxAge time.Duration) {
+	cutoff := time.Now().Add(-maxAge)
+	for id, v := range d {
+		if v.Fetched.Before(cutoff) {
+			delete(d, id)
+		}
+	}
+}
+
+// Save writes d to path atomically.
+func (d Details) Save(path string) error {
+	return writeJSON(path, d)
 }

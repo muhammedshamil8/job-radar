@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"html"
 	"io"
 	"net/http"
 	"regexp"
@@ -118,4 +119,80 @@ func getInfopark(ctx context.Context, c *http.Client, url string, v any) error {
 		return err
 	}
 	return json.Unmarshal(body, v)
+}
+
+var (
+	inertiaRE   = regexp.MustCompile(`data-page="([^"]+)"`)
+	infoparkBox = regexp.MustCompile(`(?s)comp-job-deatiil.*?(<footer|$)`)
+)
+
+// Describe fetches the description of a title-only park job.
+func Describe(ctx context.Context, c *http.Client, j Job) (string, error) {
+	switch {
+	case strings.HasPrefix(j.ID, "technopark:"):
+		return technoparkDescription(ctx, c, j.URL)
+	case strings.HasPrefix(j.ID, "infopark:"):
+		return infoparkDescription(ctx, c, j.URL)
+	default:
+		return "", fmt.Errorf("no description source for %s", j.ID)
+	}
+}
+
+// Technopark pages are Inertia.js apps: the job is JSON in the data-page attribute.
+// Only the job's own text is used, not the company profile, which often lists every
+// technology the company has ever touched.
+func technoparkDescription(ctx context.Context, c *http.Client, url string) (string, error) {
+	page, err := getText(ctx, c, url)
+	if err != nil {
+		return "", err
+	}
+	m := inertiaRE.FindStringSubmatch(page)
+	if m == nil {
+		return "", fmt.Errorf("technopark: no data-page in %s", url)
+	}
+	var data struct {
+		Props struct {
+			JobListing struct {
+				Description string `json:"job_description_content"`
+				Skills      string `json:"preferred_skills_content"`
+			} `json:"jobListing"`
+		} `json:"props"`
+	}
+	if err := json.Unmarshal([]byte(html.UnescapeString(m[1])), &data); err != nil {
+		return "", fmt.Errorf("technopark: %w", err)
+	}
+	jl := data.Props.JobListing
+	return plain(jl.Description + " " + jl.Skills), nil
+}
+
+func infoparkDescription(ctx context.Context, c *http.Client, url string) (string, error) {
+	page, err := getText(ctx, c, url)
+	if err != nil {
+		return "", err
+	}
+	box := infoparkBox.FindString(page)
+	if box == "" {
+		return "", fmt.Errorf("infopark: no job details in %s", url)
+	}
+	return plain(scriptRE.ReplaceAllString(box, " ")), nil
+}
+
+var scriptRE = regexp.MustCompile(`(?s)<script.*?</script>|<style.*?</style>`)
+
+func getText(ctx context.Context, c *http.Client, url string) (string, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("User-Agent", "job-radar/1.0 (+https://github.com/muhammedshamil8/job-radar)")
+	resp, err := c.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("GET %s: %s", url, resp.Status)
+	}
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 8<<20))
+	return string(body), err
 }
